@@ -1,6 +1,15 @@
+using MovieFinder.Application;
+using MovieFinder.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddLogging(configure => configure.AddConsole())
+    .AddApplicationRegistration()
+    .AddPersistanceRegistration(builder.Configuration);
+    
+
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
