@@ -1,0 +1,16 @@
+.card-design {
+  display: flex;
+  flex-direction: row;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover {
+  color: rgb(149, 143, 143);
+}
+
+.image-hover-effect:hover {
+  opacity: 0.8; /* Hover durumunda opacity değerini düşür */
+}
