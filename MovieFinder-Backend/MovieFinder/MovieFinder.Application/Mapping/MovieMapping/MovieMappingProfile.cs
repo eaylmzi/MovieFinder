@@ -14,7 +14,11 @@ namespace MovieFinder.Application.Mapping.MovieMapping
         public MovieMappingProfile()
         {
             CreateMap<Movie, MovieDetailViewModel>()
-                    .ReverseMap();
+                .ForMember(dest => dest.DirectorName, opt => opt.MapFrom(src => src.DirectorId))
+                .ForMember(dest => dest.StarsName, opt => opt.MapFrom(src => src.StarsId))
+                .ForMember(dest => dest.WritersName, opt => opt.MapFrom(src => src.WritersId))
+                .ForMember(dest => dest.MovieTypesName, opt => opt.MapFrom(src => src.MovieTypesId))
+                .ReverseMap();
         }
     }
 }

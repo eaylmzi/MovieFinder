@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace MovieFinder.Infrastructure.Repositories
 {
-    public class MovieRepository : GenericRepository<Movie>, IMovieRepository
+    public class MovieGenreRepository : GenericRepository<MovieGenre>, IMovieGenreRepository
     {
-        public MovieRepository(IMovieFinderDatabaseSettings settings, IMongoClient mongoClient) : base(settings, mongoClient)
+        public MovieGenreRepository(IMovieFinderDatabaseSettings settings, IMongoClient mongoClient) : base(settings, mongoClient)
         {
         }
     }

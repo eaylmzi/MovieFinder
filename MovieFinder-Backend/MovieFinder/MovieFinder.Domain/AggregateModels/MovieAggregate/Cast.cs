@@ -13,9 +13,9 @@ namespace MovieFinder.Domain.AggregateModels.MovieAggregate
         [BsonElement("name")]
         public string Name { get; set; }
         [BsonElement("title")]
-        public List<TitleType> Title { get; set; }
+        public List<string> Title { get; set; }
 
-        public Cast(string name, List<TitleType> title)
+        public Cast(string name, List<string> title)
         {
             Name = name;
             Title = title;

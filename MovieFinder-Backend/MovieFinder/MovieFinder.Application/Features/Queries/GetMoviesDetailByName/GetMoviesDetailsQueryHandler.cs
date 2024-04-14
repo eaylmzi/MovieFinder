@@ -3,6 +3,7 @@ using DnsClient;
 using MediatR;
 using MovieFinder.Application.Features.Queries.ViewModels;
 using MovieFinder.Application.Interfaces.Repositories;
+using MovieFinder.Application.Interfaces.StringHelper;
 using MovieFinder.Domain.AggregateModels.MovieAggregate;
 using MovieFinder.Domain.Enums;
 using MovieFinder.Domain.Message;
@@ -18,13 +19,17 @@ namespace MovieFinder.Application.Features.Queries.GetMovieDetailByName
     {
         IMovieRepository movieRepository;
         ICastRepository castRepository;
+        IMovieGenreRepository movieGenreRepository;
+        ITextProcessing textProcessing;
         private readonly IMapper mapper;
 
-        public GetMoviesDetailsQueryHandler(IMovieRepository movieRepository, IMapper mapper, ICastRepository castRepository)
+        public GetMoviesDetailsQueryHandler(IMovieRepository movieRepository, IMapper mapper, ICastRepository castRepository, ITextProcessing textProcessing, IMovieGenreRepository movieGenreRepository)
         {
             this.movieRepository = movieRepository;
             this.mapper = mapper;
             this.castRepository = castRepository;
+            this.textProcessing = textProcessing;
+            this.movieGenreRepository = movieGenreRepository;
         }
         /// <summary>
         /// Handles the movie query and retrieves movie details asynchronously.
@@ -37,9 +42,20 @@ namespace MovieFinder.Application.Features.Queries.GetMovieDetailByName
             // Determine the search type based on the request
             var searchType = SearchType.FromName(request.SearchType);
 
+            // Turn to all string to lower case
+            request.Name = textProcessing.AllLowercase(request.Name);
+
             // Get movies based on the specified search type asynchronously
             List<Movie> movieList = await GetMoviesAsync(request, searchType);
 
+            foreach (Movie movie in movieList)
+            {
+                movie.Name = textProcessing.FirstLetterTurnUpper(movie.Name);
+                await ProcessDirector(movie);
+                await ProcessStars(movie);
+                await ProcessWriters(movie);
+                await ProcessGenres(movie);
+            }
             // If no movies are retrieved, or the list is empty, return a failure response
             if (movieList == null || movieList.Count == 0)
             {
@@ -136,6 +152,59 @@ namespace MovieFinder.Application.Features.Queries.GetMovieDetailByName
 
             return movies;
         }
+        /// <summary>
+        /// Processes the director name for a movie.
+        /// </summary>
+        /// <param name="movie">The movie for which to process the director.</param>
+        private async Task ProcessDirector(Movie movie)
+        {
+            Cast director = await castRepository.GetByIdAsync(movie.DirectorId);
+            movie.DirectorId = textProcessing.FirstLetterTurnUpper(director.Name) ?? "Unknown Director";
+        }
 
+        /// <summary>
+        /// Processes the star name for a movie.
+        /// </summary>
+        /// <param name="movie">The movie for which to process the stars.</param>
+        private async Task ProcessStars(Movie movie)
+        {
+            List<string> starNames = new List<string>();
+            foreach (string starId in movie.StarsId)
+            {
+                Cast star = await castRepository.GetByIdAsync(starId);
+                starNames.Add(textProcessing.FirstLetterTurnUpper(star.Name) ?? "Unknown Star");
+            }
+            movie.StarsId = starNames;
+        }
+
+        /// <summary>
+        /// Processes the writer name for a movie.
+        /// </summary>
+        /// <param name="movie">The movie for which to process the writers.</param>
+        private async Task ProcessWriters(Movie movie)
+        {
+            List<string> writerNames = new List<string>();
+            foreach (string writerId in movie.WritersId)
+            {
+                Cast writer = await castRepository.GetByIdAsync(writerId);
+                writerNames.Add(textProcessing.FirstLetterTurnUpper(writer.Name) ?? "Unknown Writer");
+            }
+            movie.WritersId = writerNames;
+        }
+
+        /// <summary>
+        /// Processes the genre name for a movie.
+        /// </summary>
+        /// <param name="movie">The movie for which to process the genres.</param>
+        private async Task ProcessGenres(Movie movie)
+        {
+            List<string> genreNames = new List<string>();
+            foreach (string genreId in movie.MovieTypesId)
+            {
+                MovieGenre movieGenre = await movieGenreRepository.GetByIdAsync(genreId);
+                genreNames.Add(textProcessing.FirstLetterTurnUpper(movieGenre.Name) ?? "Unknown Genre");
+            }
+            movie.MovieTypesId = genreNames;
+        }
     }
 }

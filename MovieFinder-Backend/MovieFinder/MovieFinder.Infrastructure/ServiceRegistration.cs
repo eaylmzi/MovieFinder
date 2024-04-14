@@ -12,6 +12,8 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MovieFinder.Application.Interfaces.Repositories;
 using MovieFinder.Infrastructure.Repositories;
+using MovieFinder.Application.Interfaces.StringHelper;
+using MovieFinder.Infrastructure.StringHelper;
 
 namespace MovieFinder.Infrastructure
 {
@@ -48,6 +50,11 @@ namespace MovieFinder.Infrastructure
 
             services.AddSingleton<IMovieRepository, MovieRepository>();
             services.AddSingleton<ICastRepository, CastRepository>();
+            services.AddSingleton<IMovieGenreRepository, MovieGenreRepository>();
+
+            services.AddScoped(typeof(IPaginationRepository<>), typeof(PaginationRepository<>));
+            services.AddSingleton<ITextProcessing, TextProcessing>();
+
             //Other Dependencies
 
             return services;
