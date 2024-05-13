@@ -1,11 +1,10 @@
-import "./Header.css";
+import "./Navbar.css";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import SearchField from "../../common/SearchField/SearchField";
+import SearchField from "../../forms/navbar/SearchField/SearchField";
 
 const Header = () => {
   const navigate = useNavigate();
-  // Arama değerini güncellemek için fonksiyon
 
   const setTextField = () => {
     let inputField = document.getElementById("movie-input").value;
@@ -33,4 +32,3 @@ const Header = () => {
   );
 };
 export default Header;
-// Stil objeleri

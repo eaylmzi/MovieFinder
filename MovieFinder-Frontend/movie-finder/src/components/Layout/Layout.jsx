@@ -1,11 +1,11 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import Header from "./Header/Header.jsx";
+import Navbar from "./Navbar/Navbar.jsx";
 
 const Layout = () => {
   return (
     <>
-      <Header />
+      <Navbar />
       <Outlet />
     </>
   );

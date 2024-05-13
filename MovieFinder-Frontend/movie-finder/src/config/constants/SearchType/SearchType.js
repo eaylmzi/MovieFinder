@@ -3,7 +3,6 @@ const SEARCH_TYPE = {
   DIRECTOR: "director",
   STAR: "star",
   YEAR: "year",
-  // Diğer API rotalarını buraya ekleyebilirsiniz
 };
 
 export default SEARCH_TYPE;
